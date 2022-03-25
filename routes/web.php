@@ -19,8 +19,14 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+// auth routes
+Route::middleware(['auth'])->group(function () {
+    Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+    Route::resource('students', App\Http\Controllers\StudentController::class);
+});
+
 
 Route::get('test', function() {
     Storage::disk('google')->put('test.txt', 'Hello World');
 });
+
