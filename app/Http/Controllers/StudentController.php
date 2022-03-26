@@ -58,7 +58,7 @@ class StudentController extends AppBaseController
         $input = $request->all();
 
         // store photo in google drive with specify folder id
-        $fileName = $request->file('photo')->store('1vpX-gBIdPS5XtbycqCVG21hBqufwJUxZ', 'google');
+        $fileName = $request->file('photo')->store(env('STUDENT_FOLDER_ID'), 'google');
         $input['photo'] = Storage::disk('google')->url($fileName);
 
         $student = $this->studentRepository->create($input);
@@ -131,10 +131,10 @@ class StudentController extends AppBaseController
         // delete old photo
         $fileId = str_replace('https://drive.google.com/uc?id=', '', $student->photo);
         $fileId = str_replace('&export=media', '', $fileId);
-        Storage::disk('google')->delete('1vpX-gBIdPS5XtbycqCVG21hBqufwJUxZ/' . $fileId);
+        Storage::disk('google')->delete(env('STUDENT_FOLDER_ID') . '/' . $fileId);
         
         // store photo in google drive with specify folder id
-        $fileName = $request->file('photo')->store('1vpX-gBIdPS5XtbycqCVG21hBqufwJUxZ', 'google');
+        $fileName = $request->file('photo')->store(env('STUDENT_FOLDER_ID'), 'google');
         $input['photo'] = Storage::disk('google')->url($fileName);
         
 
@@ -164,11 +164,11 @@ class StudentController extends AppBaseController
             return redirect(route('students.index'));
         }
 
-        // delete photo from google drive in folder id 1vpX-gBIdPS5XtbycqCVG21hBqufwJUxZ
+        // delete photo from google drive in folder id on .env
         // get id of photo in google drive link
         $fileId = str_replace('https://drive.google.com/uc?id=', '', $student->photo);
         $fileId = str_replace('&export=media', '', $fileId);
-        Storage::disk('google')->delete('1vpX-gBIdPS5XtbycqCVG21hBqufwJUxZ/' . $fileId);
+        Storage::disk('google')->delete(env('STUDENT_FOLDER_ID') . '/' . $fileId);
 
         $this->studentRepository->delete($id);
 
