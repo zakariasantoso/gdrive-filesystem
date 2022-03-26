@@ -7,7 +7,9 @@
 <!-- Photo Field -->
 <div class="col-sm-12">
     {!! Form::label('photo', 'Photo:') !!}
-    <p>{{ $student->photo }}</p>
+    <p>
+        <img src="{{ $student->photo }}" class="img-fluid">
+    </p>
 </div>
 
 <!-- Created At Field -->

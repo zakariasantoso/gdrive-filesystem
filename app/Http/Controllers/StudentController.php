@@ -57,8 +57,8 @@ class StudentController extends AppBaseController
     {
         $input = $request->all();
 
-        // store photo in google drive
-        $fileName = $request->file('photo')->store('', 'google');
+        // store photo in google drive with specify folder id
+        $fileName = $request->file('photo')->store('1vpX-gBIdPS5XtbycqCVG21hBqufwJUxZ', 'google');
         $input['photo'] = Storage::disk('google')->url($fileName);
 
         $student = $this->studentRepository->create($input);
@@ -126,7 +126,19 @@ class StudentController extends AppBaseController
             return redirect(route('students.index'));
         }
 
-        $student = $this->studentRepository->update($request->all(), $id);
+        $input = $request->all();
+
+        // delete old photo
+        $fileId = str_replace('https://drive.google.com/uc?id=', '', $student->photo);
+        $fileId = str_replace('&export=media', '', $fileId);
+        Storage::disk('google')->delete('1vpX-gBIdPS5XtbycqCVG21hBqufwJUxZ/' . $fileId);
+        
+        // store photo in google drive with specify folder id
+        $fileName = $request->file('photo')->store('1vpX-gBIdPS5XtbycqCVG21hBqufwJUxZ', 'google');
+        $input['photo'] = Storage::disk('google')->url($fileName);
+        
+
+        $student = $this->studentRepository->update($input, $id);
 
         Flash::success('Student updated successfully.');
 
@@ -151,6 +163,12 @@ class StudentController extends AppBaseController
 
             return redirect(route('students.index'));
         }
+
+        // delete photo from google drive in folder id 1vpX-gBIdPS5XtbycqCVG21hBqufwJUxZ
+        // get id of photo in google drive link
+        $fileId = str_replace('https://drive.google.com/uc?id=', '', $student->photo);
+        $fileId = str_replace('&export=media', '', $fileId);
+        Storage::disk('google')->delete('1vpX-gBIdPS5XtbycqCVG21hBqufwJUxZ/' . $fileId);
 
         $this->studentRepository->delete($id);
 
